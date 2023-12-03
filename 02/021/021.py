@@ -51,6 +51,7 @@ def find_sum_of_possible_games(inputs: list[str]) -> int:
 
     return sum_of_games
 
+
 if __name__ == "__main__":
     filename = sys.argv[1]
     inputs = get_raw_lines_from_file(filename=filename)
