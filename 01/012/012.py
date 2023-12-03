@@ -45,7 +45,7 @@ def find_calibration_value(calibration: str) -> int:
             if word in part:
                 digit2 = word2digit[word]
                 break
-        
+
         if digit2:
             break
 
