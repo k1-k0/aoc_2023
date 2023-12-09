@@ -25,55 +25,92 @@ def find_sum_of_parts(matrix: list[list[str]]) -> int:
     result = 0
 
     for i in range(len(matrix)):
-        part = ""
         for j in range(len(matrix[i])):
-            if matrix[i][j].isdigit():
-                part += matrix[i][j]
+            if matrix[i][j] != GEAR:
                 continue
-            
-            gear_position = is_any_gear_around(i, j-1, len(part), matrix)
-            if len(part) > 0 and gear_position is not None:
-                # TODO: lookup number around gear exclude first number
-                # TODO: искать звезду а вокруг нее уже числа
-                result += int(part)
-                part = ""
-            else:
-                part = ""
-        
-        if len(part) > 0 and is_any_gear_around(i, len(matrix[i])-1, len(part), matrix):
-            result += int(part)
+
+            pos = is_any_digit_around(i, j, matrix)
+            if pos is None:
+                continue
+
+            fi, fj = pos[0], pos[1]
+            number1 = find_full_number(fi, fj, matrix)
+
+            pos2 = is_any_digit_around(i, j, matrix, fi, fj)
+            if pos2 is None:
+                continue
+
+            si, sj = pos2[0], pos2[1]
+            number2 = find_full_number(si, sj, matrix)
+
+            if number1 is not None and number2 is not None:
+                result += (number1 * number2)
 
     return result
 
 
-def is_any_gear_around(i: int, j: int, part_len: int, matrix: list[list[str]]) -> tuple[int, int] | None:
-    for k in range(part_len):
-        pos = j - k
-        if i > 0 and matrix[i - 1][pos] == GEAR:
-            return (i - 1, pos)
-        if i + 1 < len(matrix) and matrix[i + 1][pos] == GEAR:
-            return (i + 1, pos)
+def is_any_digit_around(
+    i: int,
+    j: int,
+    matrix: list[list[str]],
+    fi: int | None = None,
+    fj: int | None = None,
+) -> tuple[int, int] | None:
+    si, sj = i - 1, j
+    if i > 0 and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
 
-        if k == part_len - 1:
-            if pos > 0 and matrix[i][pos - 1] == GEAR:
-                return (i, pos - 1)
-            if i > 0 and pos > 0 and matrix[i - 1][pos - 1] == GEAR:
-                return (i - 1, pos - 1)
-            if i + 1 < len(matrix) and pos > 0 and matrix[i + 1][pos - 1] == GEAR:
-                return (i + 1, pos - 1)
+    si, sj = i + 1, j
+    if si < len(matrix) and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
 
-        if k == 0:
-            if pos + 1 != len(matrix[i]) and matrix[i][pos + 1] == GEAR:
-                return (i, pos + 1)
-            if i > 0 and pos + 1 != len(matrix[i]) and matrix[i - 1][pos + 1] == GEAR:
-                return (i - 1, pos + 1)
-            if i + 1 < len(matrix) and pos + 1 != len(matrix[i]) and matrix[i + 1][pos + 1] == GEAR:
-                return (i + 1, pos + 1)
-        
+    si, sj = i, j - 1
+    if j > 0 and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
+
+    si, sj = i - 1, j - 1
+    if i > 0 and j > 0 and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
+
+    si, sj = i + 1, j - 1
+    if i + 1 < len(matrix) and j > 0 and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
+
+    si, sj = i, j + 1
+    if j + 1 < len(matrix[i]) and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
+
+    si, sj = i - 1, j + 1
+    if i > 0 and j + 1 < len(matrix[i]) and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
+
+    si, sj = i + 1, j + 1
+    if i + 1 < len(matrix) and j + 1 < len(matrix[i]) and matrix[si][sj].isdigit():
+        if (fi is None and fj is None) or ((fi, fj) != (si, sj) and (abs(fi - si) == 2 or abs(fj - sj) == 2)):
+            return (si, sj)
+
     return None
 
 
-def is_any_number
+def find_full_number(i: int, j: int, matrix: list[list[str]]) -> int | None: 
+    while j > 0 and matrix[i][j - 1].isdigit():
+        j -= 1
+
+    digits = ""
+    while j < len(matrix) - 1 and matrix[i][j + 1].isdigit():
+        digits += matrix[i][j]
+        j += 1
+
+    digits += matrix[i][j]
+
+    return int(digits)
 
 
 if __name__ == "__main__":
