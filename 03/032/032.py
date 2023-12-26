@@ -99,7 +99,7 @@ def is_any_digit_around(
     return None
 
 
-def find_full_number(i: int, j: int, matrix: list[list[str]]) -> int | None: 
+def find_full_number(i: int, j: int, matrix: list[list[str]]) -> int | None:
     while j > 0 and matrix[i][j - 1].isdigit():
         j -= 1
 
